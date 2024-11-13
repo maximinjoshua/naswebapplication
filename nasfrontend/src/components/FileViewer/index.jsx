@@ -10,6 +10,14 @@ const FileViewer = () => {
         setSelectedFiles([...files])
         console.log(selectedFiles, "selectedfiles")
     }
+
+    const uploadFiles = () => {
+        let formData = new FormData()
+        
+        for(let i=0; i<selectedFiles.length; i++){
+            formData.append(selectedFiles[i].name, selectedFiles[i].value)
+        }
+    }
     return <>
         <Grid container direction={"column"}>
             <Grid item>
