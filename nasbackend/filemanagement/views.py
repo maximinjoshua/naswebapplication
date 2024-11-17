@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.decorators.http import require_GET, require_POST
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict, JsonResponse
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError, transaction
 
@@ -23,14 +23,19 @@ def login(request):
     data = json.loads(request.body)
     user = authenticate(request, **data)
     if user:
-        return HttpResponse("Login Successful")
+        profile_instance = Profile.objects.get(user=user)
+        user_level = profile_instance.user_level
+        return JsonResponse(data = {"user_level": user_level, "user_id": user.id})
     else:
-        return HttpResponse("No such user exists")
+        return JsonResponse(data={"error": "User not found"}, status=401)
 
 @require_POST
 def upload_files(request):
 
-    print(dir(request))
+    # print(dir(request))
+    data = QueryDict.dict(request.POST)
+    print(data)
+
     print(request.FILES)
     # I can assume now that only GET or POST requests make it this far
     # ...
