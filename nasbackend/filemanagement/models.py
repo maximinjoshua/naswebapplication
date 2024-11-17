@@ -3,6 +3,14 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+class Profile(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user_level = models.IntegerField()
+
+    class Meta:
+        db_table = 'profile'
+
 class Folders(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=100)
