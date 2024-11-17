@@ -28,6 +28,15 @@ def login(request):
         return JsonResponse(data = {"user_level": user_level, "user_id": user.id})
     else:
         return JsonResponse(data={"error": "User not found"}, status=401)
+    
+@require_GET
+def get_user_profile(request):
+    data = json.loads(request.body)
+    profile_instance = Profile.objects.get(user_id = data["user_id"])
+    if profile_instance:
+        return JsonResponse(data = {"user_level": profile_instance.user_level})
+    else:
+        return JsonResponse(data = {"error": "Profile not found"}, status=500)
 
 @require_POST
 def upload_files(request):

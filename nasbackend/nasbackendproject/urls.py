@@ -17,11 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from filemanagement.views import upload_files, register, login
+from filemanagement.views import upload_files, register, login, get_user_profile
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("uploadfiles", upload_files),
     path("register/", register),
+    path("getuserprofile/", get_user_profile),
     path("login/", login)
 ]
