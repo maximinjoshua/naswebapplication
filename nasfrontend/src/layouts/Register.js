@@ -13,8 +13,8 @@ function Register() {
       setLoginForm({...loginForm, ...textFieldData})
     }
 
-    const onRegister = () => {
-      const response = authServices.register({email: loginForm.email, password: loginForm.password, username: loginForm.email})
+    const onRegister = async () => {
+      const response = await authServices.register({email: loginForm.email, password: loginForm.password, username: loginForm.email})
       if(response.status == 200){
         navigate('/');
       }
