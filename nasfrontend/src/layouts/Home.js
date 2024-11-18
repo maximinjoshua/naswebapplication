@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useState,useContext,useEffect} from "react";
 import {
   Toolbar,
   Box,
@@ -14,11 +14,17 @@ import {
   Paper,
   Button,
   TextField,
-  IconButton
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormGroup,
+  FormControlLabel,
+  DialogActions,
+  Checkbox
 } from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import SearchIcon from "@mui/icons-material/Search";
 import Header from "./Header";
+import { LoginContext } from '../App';
 
 // Dummy data for files and permissions
 const filesData = [
@@ -32,6 +38,59 @@ const filesData = [
   { id: 8, name: "File 8", permission: "Read and Write" },
 ];
 function Home() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [file, setFile] = useState(null);
+  const [options, setOptions] = useState({
+    Level1R:false,
+    Level1RW:false,
+    Level2R:false,
+    Level2RW:false
+  });
+  const useLoginContext=useContext(LoginContext)
+  useEffect(() => {
+    if (useLoginContext.userLevel === 1) {
+      setOptions({
+        Level1R: true,
+        Level1RW: true,
+        Level2R: false,
+        Level2RW: false,
+      });
+    } else {
+      setOptions({
+        Level1R: true,
+        Level1RW: true,
+        Level2R: true,
+        Level2RW: true,
+      });
+    }
+  }, [useLoginContext.userLevel]);
+  function handleOpen(){
+    setIsOpen(true)
+  }
+  function handleClose(){
+    setIsOpen(false)
+    setFile(null)
+  }
+  // const formData = new FormData();
+
+  function handleFileChange(e){
+    // formData.append(e)
+    setFile(e.target.files[0])
+    console.log(e)
+  }
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      [name]: checked,
+    }));
+  };
+
+  function handleSubmit(){
+    console.log(file)
+    console.log(options)
+    handleClose()
+  }
   return (<>
         <Header />
         <Box component="main" sx={{marginLeft:28, flexGrow: 1, p: 3 }}>
@@ -71,29 +130,6 @@ function Home() {
               </Box>
             </CardContent>
           </Card>
-          <TextField
-            placeholder="Search in Drive"
-            variant="outlined"
-            size="small"
-            sx={{
-              width: "800px",
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "24px",
-                backgroundColor: "#f1f3f4",
-                "&:hover": {
-                  backgroundColor: "#fff",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                },
-              },
-            }}
-            InputProps={{
-              startAdornment: (
-                <IconButton type="button" aria-label="search" size="small">
-                  <SearchIcon />
-                </IconButton>
-              ),
-            }}
-          />
           <Button
             variant="contained"
             sx={{
@@ -102,12 +138,100 @@ function Home() {
               textTransform: "none",
               px: 3,
             }}
+            onClick={handleOpen}
           >
             Upload
           </Button>
+          <Dialog open={isOpen} onClose={handleClose}>
+        <DialogTitle>Upload File</DialogTitle>
+        <DialogContent>
+          <TextField
+            type="file"
+            fullWidth
+            onChange={handleFileChange}
+          />
+          <p>{useLoginContext.userLevel}</p>
+          {useLoginContext.userLevel === "0" && (
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="Level1R"
+                    checked={options.Level1R}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Level 1 Read"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="Level1RW"
+                    checked={options.Level1RW}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Level 1 Read/Write"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="Level2R"
+                    checked={options.Level2R}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Level 2 Read"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="Level2RW"
+                    checked={options.Level2RW}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Level 2 Read/Write"
+              />
+            </FormGroup>
+          )}
+          {useLoginContext.userLevel === "1"  && (
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="Level2R"
+                    checked={options.Level2R}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Level 2 Read"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="Level2RW"
+                    checked={options.Level2RW}
+                    onChange={handleCheckboxChange}
+                  />
+                }
+                label="Level 2 Read/Write"
+              />
+            </FormGroup>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} disabled={!file}>
+            Upload
+          </Button>
+        </DialogActions>
+      </Dialog>
         </Box>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="files table">
+          <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
                 <TableCell>File Name</TableCell>

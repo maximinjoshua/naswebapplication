@@ -87,50 +87,50 @@ def register(request):
             linux_user_name = user.username
             Profile.objects.create(user = user, user_level = 2, nas_password = data["password"], nas_username = linux_user_name)
 
-            # add a linux user for each register
-            ssh = get_ssh_access(settings.NAS_ROOT_USERNAME, settings.NAS_ROOT_PASSWORD)
-            # useradd_command = f"sudo useradd -m {user.username}"
-            # stdin, stdout, stderr = ssh.exec_command(useradd_command)
+            # # add a linux user for each register
+            # ssh = get_ssh_access(settings.NAS_ROOT_USERNAME, settings.NAS_ROOT_PASSWORD)
+            # # useradd_command = f"sudo useradd -m {user.username}"
+            # # stdin, stdout, stderr = ssh.exec_command(useradd_command)
+            # # print(stderr.read().decode('utf-8'), "err")
+            # # print(stdout, "out")
+
+            # add_usercommand = f"""echo -e "{data["password"]}\n{data["password"]}\n{linux_user_name}\n\n\n\n\ny" | sudo adduser {linux_user_name} --allow-bad-names"""
+            # stdin, stdout, stderr = ssh.exec_command(add_usercommand)
             # print(stderr.read().decode('utf-8'), "err")
             # print(stdout, "out")
 
-            add_usercommand = f"""echo -e "{data["password"]}\n{data["password"]}\n{linux_user_name}\n\n\n\n\ny" | sudo adduser {linux_user_name} --allow-bad-names"""
-            stdin, stdout, stderr = ssh.exec_command(add_usercommand)
-            print(stderr.read().decode('utf-8'), "err")
-            print(stdout, "out")
+            # # # Set the user's password
+            # # passwd_command = f"echo '{user.username}:{data["password"]}' | sudo chpasswd"
+            # # stdin, stdout, stderr = ssh.exec_command(passwd_command)
+            # # print(stderr.read().decode('utf-8'), "err")
+            # # print(stdout, "out")
+            # # # ssh.close()
 
-            # # Set the user's password
-            # passwd_command = f"echo '{user.username}:{data["password"]}' | sudo chpasswd"
-            # stdin, stdout, stderr = ssh.exec_command(passwd_command)
+            # # ssh = get_ssh_access(settings.NAS_ROOT_USERNAME, settings.NAS_ROOT_PASSWORD)
+            # # add samba user
+            # samba_useradd = f'echo -e "{data["password"]}\n{data["password"]}" |sudo smbpasswd -a {linux_user_name}'
+            # stdin, stdout, stderr = ssh.exec_command(samba_useradd)
             # print(stderr.read().decode('utf-8'), "err")
             # print(stdout, "out")
+
+            # # enable samba user
+            # samba_userenable = f"sudo smbpasswd -e {linux_user_name}"
+            # stdin, stdout, stderr = ssh.exec_command(samba_userenable)
+            # print(stderr.read().decode('utf-8'), "err")
+            # print(stdout, "out")
+
             # # ssh.close()
 
-            # ssh = get_ssh_access(settings.NAS_ROOT_USERNAME, settings.NAS_ROOT_PASSWORD)
-            # add samba user
-            samba_useradd = f'echo -e "{data["password"]}\n{data["password"]}" |sudo smbpasswd -a {linux_user_name}'
-            stdin, stdout, stderr = ssh.exec_command(samba_useradd)
-            print(stderr.read().decode('utf-8'), "err")
-            print(stdout, "out")
-
-            # enable samba user
-            samba_userenable = f"sudo smbpasswd -e {linux_user_name}"
-            stdin, stdout, stderr = ssh.exec_command(samba_userenable)
-            print(stderr.read().decode('utf-8'), "err")
-            print(stdout, "out")
-
-            # ssh.close()
-
-            # set acl of nas folder
-            set_acl_command = f"sudo setfacl -R -m u:{linux_user_name}:rwx {settings.NAS_TARGET_PATH}"
-            stdin, stdout, stderr = ssh.exec_command(set_acl_command)
+            # # set acl of nas folder
+            # set_acl_command = f"sudo setfacl -R -m u:{linux_user_name}:rwx {settings.NAS_TARGET_PATH}"
+            # stdin, stdout, stderr = ssh.exec_command(set_acl_command)
             
-            # Check for any errors
-            errors = stderr.read().decode('utf-8')
-            if errors:
-                print(f"Error: {errors}")
-            else:
-                print(f"User '{linux_user_name}' created successfully with password.")
+            # # Check for any errors
+            # errors = stderr.read().decode('utf-8')
+            # if errors:
+            #     print(f"Error: {errors}")
+            # else:
+            #     print(f"User '{linux_user_name}' created successfully with password.")
 
             return HttpResponse("Registered successfully")
 

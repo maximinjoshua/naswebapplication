@@ -38,5 +38,13 @@ const putData = async (url, data) => {
         return response
     });
 }
+const deleteData = async (url) => {
+    return await axios.get(
+        `${serverURL}${url}`
+    ).then(function (response) {
+        console.log("response recieved", response)
+        return response
+    });
+}
 
-export const baseServices = { getData, postData, putData }
+export const baseServices = { getData, postData, putData,deleteData }
