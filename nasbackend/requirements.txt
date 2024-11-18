@@ -9,6 +9,9 @@ mysqlclient==2.2.6
 paramiko==3.5.0
 pycparser==2.22
 PyNaCl==1.5.0
+pyspnego==0.11.2
 python-dotenv==1.0.1
+smbprotocol==1.15.0
 sqlparse==0.5.1
+sspilib==0.2.0
 tzdata==2024.2
