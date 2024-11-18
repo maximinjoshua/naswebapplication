@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'nasbackenddb',
         'USER': 'root',
-        'PASSWORD': 'furball',
+        'PASSWORD': 'Dhanasri@123',
         'HOST':'localhost',
         'PORT':'3306',
     }
