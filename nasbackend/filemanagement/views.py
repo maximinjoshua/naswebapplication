@@ -53,7 +53,7 @@ def upload_files(request):
 
 @api_view(['GET'])
 def get_all_users(request):
-    users = User.objects.prefetch_related('profile').filter(profile__user_level = 2)
+    users = User.objects.all()
     user_serializer = GetUsersSerializer(users, many = True)
     return JsonResponse(data = {"data": user_serializer.data})
 

@@ -7,8 +7,11 @@ class GetUsersSerializer(serializers.ModelSerializer):
     user_level = serializers.SerializerMethodField()
 
     def get_user_level(self, obj):
-        profile = Profile.objects.get(user_id = obj.id)
-        return profile.user_level
+        profile = Profile.objects.filter(user_id = obj.id).first()
+        if profile:
+            return profile.user_level
+        else:
+            return None
 
     class Meta:
         model = User
