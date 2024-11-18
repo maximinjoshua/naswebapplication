@@ -37,8 +37,9 @@ def login(request):
     
 @require_GET
 def get_user_profile(request):
-    data = json.loads(request.body)
-    profile_instance = Profile.objects.get(user_id = data["user_id"])
+    user_id = request.GET.get("user_id", None)
+
+    profile_instance = Profile.objects.get(user_id = user_id)
     if profile_instance:
         return JsonResponse(data = {"user_level": profile_instance.user_level})
     else:
