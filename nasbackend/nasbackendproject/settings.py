@@ -138,3 +138,8 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+NAS_HOST = "192.168.56.101"
+NAS_ROOT_USERNAME = "maximin-joshua-michael-edison"
+NAS_ROOT_PASSWORD = "maxi"
+NAS_TARGET_PATH = "/smsharefolder/"

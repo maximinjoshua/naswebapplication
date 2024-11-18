@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from filemanagement.views import (upload_files, register, login, get_user_profile, get_all_users,
-                                  edit_user_level)
+                                  edit_user_level, create_permission_entry, get_files)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,5 +27,7 @@ urlpatterns = [
     path("getuserprofile/", get_user_profile),
     path("login/", login),
     path("getallusers/", get_all_users),
-    path("edituserlevel/", edit_user_level)
+    path("edituserlevel/", edit_user_level),
+    path("createpermission", create_permission_entry),
+    path("getfiles", get_files)
 ]
