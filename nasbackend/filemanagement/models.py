@@ -7,6 +7,7 @@ class Profile(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_level = models.IntegerField()
+    nas_username = models.CharField(max_length=200)
     nas_password = models.CharField(max_length=200)
 
     class Meta:
@@ -20,6 +21,11 @@ class Folders(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
     created_by = models.ForeignKey(User, on_delete=models.RESTRICT)
 
+    def get_full_path(self):
+        if self.parent_folder:
+            return f"{self.parent_folder.get_full_path()}/{self.name}"
+        return self.name
+
     class Meta:
         db_table = 'folders'
 
@@ -31,6 +37,11 @@ class Files(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
     created_by = models.ForeignKey(User, on_delete=models.RESTRICT)
 
+    def get_full_path(self):
+        if self.parent_folder:
+            return f"{self.parent_folder.get_full_path()}/{self.name}"
+        return self.name
+    
     class Meta:
         db_table = 'files'
 

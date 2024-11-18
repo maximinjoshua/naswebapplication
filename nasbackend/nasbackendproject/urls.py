@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path
 
 from filemanagement.views import (upload_files, register, login, get_user_profile, get_all_users,
-                                  edit_user_level, create_permission_entry, get_files)
+                                  edit_user_level, create_permission_entry, get_files, create_folder,
+                                  delete_user)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -29,5 +30,7 @@ urlpatterns = [
     path("getallusers/", get_all_users),
     path("edituserlevel/", edit_user_level),
     path("createpermission", create_permission_entry),
-    path("getfiles", get_files)
+    path("getfiles", get_files),
+    path("createfolder", create_folder),
+    path("deleteuser", delete_user)
 ]
