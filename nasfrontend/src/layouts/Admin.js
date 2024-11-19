@@ -23,6 +23,7 @@ import {
   Select
 } from "@mui/material";
 import { PieChart } from '@mui/x-charts/PieChart';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { Gauge } from '@mui/x-charts/Gauge';
 import GroupIcon from "@mui/icons-material/Group";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -64,11 +65,14 @@ function Admin() {
       setLevel2(await response.data.data.filter((user)=>user.user_level===2))
   }
   async function fetchSystemDetails(){
-    const response=await baseServices.getData('getdiskusage')
-    console.log(response.data)
-    setUsed(response.data.nas_disk_size)
-    setTotal(response.data.total_disk_size)
-    setPercent(response.data.cpu_usage)
+    // const response=await baseServices.getData('getdiskusage')
+    // console.log(response.data)
+    // setUsed(response.data.nas_disk_size)
+    // setTotal(response.data.total_disk_size)
+    // setPercent(response.data.cpu_usage)
+    setUsed(69632)
+    setTotal(37580963840)
+    setPercent(4.76)
   }
   function handleOpenDialog(userId){
     setSelectedUser(userId);
@@ -119,8 +123,8 @@ function Admin() {
         alignItems: "center",
         width: "100%",
       }}>
-      <Box sx={{ textAlign: "center", flex: 1,width:"50%"}}>
-        <Typography variant="h6" gutterBottom>
+      <Box sx={{ textAlign: "start", flex: 1,width:"50%"}}>
+        <Typography variant="h6" sx={{marginLeft:10}}>
           Storage Usage
         </Typography>
         <PieChart
@@ -136,9 +140,9 @@ function Admin() {
           height={200} 
         />
       </Box>
-      <Box sx={{ textAlign: "center", flex: 1,width:"50%"}}>
-        <Typography variant="h6" gutterBottom>
-          System Performance
+      <Box sx={{ textAlign: "start", flex: 1,width:"50%"}}>
+        <Typography variant="h6" sx={{marginLeft:16}}>
+          CPU Utilization
         </Typography>
         <Gauge
           width={400}
@@ -157,7 +161,7 @@ function Admin() {
           >
             <CardContent>
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <GroupIcon sx={{ fontSize: 40 }} />
+                <AdminPanelSettingsIcon />
                 <Box>
                   <Typography variant="h6">Admin</Typography>
                   <Typography variant="body2" color="text.secondary">
