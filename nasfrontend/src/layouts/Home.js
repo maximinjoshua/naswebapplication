@@ -53,6 +53,10 @@ function Home() {
     Level2RW: false
   });
   const useLoginContext = useContext(LoginContext)
+  const fetch=async ()=>{
+    const response= await baseServices.getData(`getfiles?parent_folder_id=&user_level=${useLoginContext.userLevel}`)
+    setFilesData(response.data.data)
+  }
   useEffect(() => {
     if (useLoginContext.userLevel === 1) {
       setOptions({
@@ -69,12 +73,8 @@ function Home() {
         Level2RW: true,
       });
     }
-    const fetch=async ()=>{
-      const response= await baseServices.getData(`getfiles?parent_folder_id=&user_level=${useLoginContext.userLevel}`)
-      setFilesData(response.data.data)
-    }
     fetch()
-  },[useLoginContext.userLevel]);
+  },[isOpen]);
   function handleOpen() {
     setIsOpen(true)
   }
@@ -82,10 +82,10 @@ function Home() {
     setIsOpen(false)
     setFile(null)
   }
-  async function handleOpen(){
+  async function handleOpenFile(){
     // const response=await baseServices.
   }
-  async function handleEdit(){
+  async function handleEditFile(){
     // const response=await baseServices.
 
   }
@@ -274,8 +274,8 @@ function Home() {
                 <TableCell>{file.name}</TableCell>
                 {file.user_permissions === 'r'?<TableCell>Read Only</TableCell>:<TableCell>Read and Write</TableCell>}
                 <TableCell>
-                <IconButton onClick={() =>{handleOpen}} ><OpenInNewIcon /></IconButton>
-                {file.user_permissions === 'rw' && <IconButton onClick={() =>{handleEdit}} ><EditNoteIcon /></IconButton>}</TableCell>
+                <IconButton onClick={handleOpenFile} ><OpenInNewIcon /></IconButton>
+                {file.user_permissions === 'rw' && <IconButton onClick={handleEditFile} ><EditNoteIcon /></IconButton>}</TableCell>
               </TableRow>
             ))}
           </TableBody>
