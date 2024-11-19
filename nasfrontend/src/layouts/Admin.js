@@ -22,8 +22,11 @@ import {
   Button,
   Select
 } from "@mui/material";
+import { PieChart } from '@mui/x-charts/PieChart';
+import { Gauge } from '@mui/x-charts/Gauge';
 import GroupIcon from "@mui/icons-material/Group";
 import DeleteIcon from '@mui/icons-material/Delete';
+import WebStoriesIcon from '@mui/icons-material/WebStories';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import Header from "./Header";
 
@@ -36,6 +39,9 @@ function Admin() {
   const [isopen,setIsOpen]=useState(false)
   const [selectedUser,setSelectedUser]=useState(-1)
   const [targetGroup,setTargetGroup]=useState("")
+  const [used,setUsed]=useState(0)
+  const [total,setTotal]=useState(0)
+  const [percent,setPercent]=useState(0)
   const handleCardClick = (group) => {
     if(group === "Admin"){
       setGroup("Admin")
@@ -57,6 +63,13 @@ function Admin() {
       setLevel1(await response.data.data.filter((user)=>user.user_level===1))
       setLevel2(await response.data.data.filter((user)=>user.user_level===2))
   }
+  async function fetchSystemDetails(){
+    const response=await baseServices.getData('getdiskusage')
+    console.log(response.data)
+    setUsed(response.data.nas_disk_size)
+    setTotal(response.data.total_disk_size)
+    setPercent(response.data.cpu_usage)
+  }
   function handleOpenDialog(userId){
     setSelectedUser(userId);
     setIsOpen(true);
@@ -65,6 +78,10 @@ function Admin() {
     setIsOpen(false);
     setSelectedUser(-1);
     setTargetGroup(-1);
+  }
+  async function handleSystemLogs(){
+    const response=await baseServices.getData('getsystemlogs')
+    console.log(response)
   }
   async function handleSwap(){
     console.log(selectedUser)
@@ -85,6 +102,7 @@ function Admin() {
 
   useEffect(()=>{
     fetchUser()
+    fetchSystemDetails()
   },[group])
 
   return (<>
@@ -94,7 +112,42 @@ function Admin() {
         <Typography variant="h4" sx={{ textAlign: "center", mb: 4 }}>
           Admin Panel
         </Typography>
-        <Box sx={{ display: "flex", gap: 3, mb: 4 }}>
+        <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+      }}>
+      <Box sx={{ textAlign: "center", flex: 1,width:"50%"}}>
+        <Typography variant="h6" gutterBottom>
+          Storage Usage
+        </Typography>
+        <PieChart
+          series={[
+            {
+              data: [
+                { id: 0, value: used, label: "Used" },
+                { id: 1, value: total-used, label: "Free Space" },
+              ],
+            },
+          ]}
+          width={400}
+          height={200} 
+        />
+      </Box>
+      <Box sx={{ textAlign: "center", flex: 1,width:"50%"}}>
+        <Typography variant="h6" gutterBottom>
+          System Performance
+        </Typography>
+        <Gauge
+          width={400}
+          height={200}
+          value={percent}
+        />
+      </Box>
+    </Box>
+        <Box sx={{ display: "flex", gap:2,mb:3,justifyContent: "space-around",marginTop:5  }}>
           <Card
             sx={{
               width: 240,
@@ -152,6 +205,22 @@ function Admin() {
               </Box>
             </CardContent>
           </Card>
+          <Card
+            sx={{
+              width: 240,
+              cursor: "pointer"
+            }}
+            onClick={() => {handleSystemLogs()}}
+          >
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <WebStoriesIcon />
+                <Box>
+                  <Typography variant="h6">System Logs</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
         </Box>
         {group && (
           <TableContainer component={Paper}>
@@ -176,7 +245,7 @@ function Admin() {
                   <TableRow key={user.id}>
                     <TableCell>{user.id}</TableCell>
                     <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.user_level}</TableCell>
+                    {user.user_level===0? <TableCell>Admin</TableCell>: user.user_level===1?<TableCell>Level 1</TableCell>:<TableCell>Level 2</TableCell>}
                     {group !== "Admin" && <TableCell>
                       <IconButton onClick={() => handleOpenDialog(user.id)} ><SwapHorizIcon /></IconButton>
                       <IconButton onClick={() => handleDelete(user.id)} ><DeleteIcon></DeleteIcon></IconButton>

@@ -20,27 +20,32 @@ import {
   FormGroup,
   FormControlLabel,
   DialogActions,
-  Checkbox
+  Checkbox,
+  IconButton
 } from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import Header from "./Header";
 import { LoginContext } from '../App';
+import { baseServices } from "../services/BaseServiceCalls";
 import { fileServies } from "../services/fileServices";
 
 // Dummy data for files and permissions
-const filesData = [
-  { id: 1, name: "File 1", permission: "Read Only" },
-  { id: 2, name: "File 2", permission: "Read and Write" },
-  { id: 3, name: "File 3", permission: "Read Only" },
-  { id: 4, name: "File 4", permission: "Read and Write" },
-  { id: 5, name: "File 5", permission: "Read Only" },
-  { id: 6, name: "File 6", permission: "Read and Write" },
-  { id: 7, name: "File 7", permission: "Read Only" },
-  { id: 8, name: "File 8", permission: "Read and Write" },
-];
+// const filesData = [
+//   { id: 1, name: "File 1", permission: "Read Only" },
+//   { id: 2, name: "File 2", permission: "Read and Write" },
+//   { id: 3, name: "File 3", permission: "Read Only" },
+//   { id: 4, name: "File 4", permission: "Read and Write" },
+//   { id: 5, name: "File 5", permission: "Read Only" },
+//   { id: 6, name: "File 6", permission: "Read and Write" },
+//   { id: 7, name: "File 7", permission: "Read Only" },
+//   { id: 8, name: "File 8", permission: "Read and Write" },
+// ];
 function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [file, setFile] = useState(null);
+  const [filesData,setFilesData]=useState([])
   const [options, setOptions] = useState({
     Level1R: false,
     Level1RW: false,
@@ -64,7 +69,12 @@ function Home() {
         Level2RW: true,
       });
     }
-  }, [useLoginContext.userLevel]);
+    const fetch=async ()=>{
+      const response= await baseServices.getData(`getfiles?parent_folder_id=&user_level=${useLoginContext.userLevel}`)
+      setFilesData(response.data.data)
+    }
+    fetch()
+  },[useLoginContext.userLevel]);
   function handleOpen() {
     setIsOpen(true)
   }
@@ -102,7 +112,7 @@ function Home() {
       const permissionUpdateResponse = await fileServies.createPermissionEntry(user_file_permissions)
       console.log(permissionUpdateResponse, "permission")
     }
-
+    handleClose()
   }
   return (<>
     <Header />
@@ -248,13 +258,17 @@ function Home() {
             <TableRow>
               <TableCell>File Name</TableCell>
               <TableCell>Permissions</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filesData.map((file) => (
               <TableRow key={file.id}>
                 <TableCell>{file.name}</TableCell>
-                <TableCell>{file.permission}</TableCell>
+                {file.user_permissions === 'r'?<TableCell>Read Only</TableCell>:<TableCell>Read and Write</TableCell>}
+                <TableCell>
+                <IconButton onClick={() =>{}} ><OpenInNewIcon /></IconButton>
+                {file.user_permissions === 'rw' && <IconButton onClick={() =>{}} ><EditNoteIcon /></IconButton>}</TableCell>
               </TableRow>
             ))}
           </TableBody>

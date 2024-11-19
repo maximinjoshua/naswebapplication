@@ -184,26 +184,26 @@ def upload_files(request):
 
         for uploaded_file in uploaded_files:
             temp_file_path = os.path.join(storage_path, uploaded_file.name)
-            with open(temp_file_path, "wb+") as temp_file:
-                for chunk in uploaded_file.chunks():
-                    temp_file.write(chunk)
+            # with open(temp_file_path, "wb+") as temp_file:
+            #     for chunk in uploaded_file.chunks():
+            #         temp_file.write(chunk)
 
-            remote_file_path = os.path.join(nas_target_path, uploaded_file.name)
-            # sftp.put(temp_file_path, remote_file_path)
+            # remote_file_path = os.path.join(nas_target_path, uploaded_file.name)
+            # # sftp.put(temp_file_path, remote_file_path)
 
-            user_creds = get_username_password_smb(data["user_id"])
-            print(user_creds, "user creds")
-            # smb = create_smb_client_instance(user_creds["user_name"], user_creds["smb_password"])
-            # # samba upload
-            # print(temp_file_path ,"tempfilepath")
-            # print(remote_file_path, "remote filepath")
-            # smb.upload(temp_file_path, f"\\192.168.56.101\externalaccessibleshare\{uploaded_file.name}")
+            # user_creds = get_username_password_smb(data["user_id"])
+            # print(user_creds, "user creds")
+            # # smb = create_smb_client_instance(user_creds["user_name"], user_creds["smb_password"])
+            # # # samba upload
+            # # print(temp_file_path ,"tempfilepath")
+            # # print(remote_file_path, "remote filepath")
+            # # smb.upload(temp_file_path, f"\\192.168.56.101\externalaccessibleshare\{uploaded_file.name}")
 
-            # Open the remote file for writing and upload the content
-            with open_file(r"\\192.168.56.101\externalaccessibleshare\\" + uploaded_file.name, mode="wb", 
-                           username=user_creds["user_name"], password=user_creds["smb_password"]) as remote_file:
-                with open(temp_file_path, mode="rb") as local_file:
-                    remote_file.write(local_file.read())
+            # # Open the remote file for writing and upload the content
+            # with open_file(r"\\192.168.56.101\externalaccessibleshare\\" + uploaded_file.name, mode="wb", 
+            #                username=user_creds["user_name"], password=user_creds["smb_password"]) as remote_file:
+            #     with open(temp_file_path, mode="rb") as local_file:
+            #         remote_file.write(local_file.read())
 
             # update file table in my sql
             file_instance = Files(name=uploaded_file.name, parent_folder_id = data["folder_id"], created_by_id = data["user_id"])
