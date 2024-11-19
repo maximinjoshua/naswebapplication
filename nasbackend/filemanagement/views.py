@@ -290,6 +290,16 @@ def edit_user_level(request):
 
 @api_view(['GET'])
 def get_disk_usage(request):
+
+    def get_byte_size(size_string):
+        if size_string[-1] == 'G':
+            byte_size = int(size_string[:-1]) * 1024 * 1024 *1024
+        elif size_string[-1] == 'M':
+            byte_size = int(size_string[:-1]) * 1024 * 1024
+        elif size_string[-1] == 'K':
+            byte_size = int(size_string[:-1]) * 1024
+        return byte_size
+    
     ssh = get_ssh_access(settings.NAS_ROOT_USERNAME, settings.NAS_ROOT_PASSWORD)
 
     # delete user from group
@@ -304,8 +314,11 @@ def get_disk_usage(request):
 
     print(stderr.read().decode('utf-8'), "error")
 
-    return JsonResponse(data = {"data": {"total_disk_size": disk_size_stdout.read().decode('utf-8'),
-                                          "nas_disk_size": nas_size_stdout.read().decode('utf-8').rstrip('\n'),
+    total_disk_size = get_byte_size(disk_size_stdout.read().decode('utf-8'))
+    nas_disk_size = get_byte_size(nas_size_stdout.read().decode('utf-8').rstrip('\n'))
+
+    return JsonResponse(data = {"data": {"total_disk_size": total_disk_size,
+                                          "nas_disk_size": nas_disk_size,
                                           "cpu_usage": cpu_usage_stdout.read().decode('utf-8').rstrip('\n')
                                           }})
 
@@ -321,4 +334,45 @@ def get_system_logs(request):
     return JsonResponse(data = {"data": {"system_logs": system_logs_out.read().decode('utf-8')
                                           }})
 
+@api_view(['GET'])
+def view_file(request):
+    user_id = request.GET.get("user_id", None)
+    file_id = request.GET.get("file_id", None)
+
+    # get file instance
+    file_instance = Files.objects.get(id = file_id)
+    file_name = file_instance.name
+
+    user_creds = get_username_password_smb(user_id)
+
+    print(user_creds, "user_Creds")
+    print(file_name)
+
+    # Open the remote file for writing and upload the content
+    with open_file(fr"\\{settings.NAS_HOST}\{settings.NAS_SHARE_NAME}\\" + file_name, 
+                    username=user_creds["user_name"], password=user_creds["smb_password"]) as remote_file:
+        data = remote_file.read()
+        
+    return JsonResponse(data={"data": data})
+
+@api_view(['POST'])
+def edit_file(request):
+    data = json.loads(request.body)
+
+    user_id = data["user_id"]
+    file_id = data["file_id"]
+    edited_data = data["edited_data"]
+
+    # get file instance
+    file_instance = Files.objects.get(id = file_id)
+    file_name = file_instance.name
+
+    user_creds = get_username_password_smb(user_id)
+
+    # Open the remote file for writing and upload the content
+    with open_file(fr"\\{settings.NAS_HOST}\{settings.NAS_SHARE_NAME}\\" + file_name, mode='w',
+                    username=user_creds["user_name"], password=user_creds["smb_password"]) as remote_file:
+        data = remote_file.write(edited_data)
+
+    return JsonResponse(data={"data": "Updated"})
 

@@ -82,6 +82,13 @@ function Home() {
     setIsOpen(false)
     setFile(null)
   }
+  async function handleOpen(){
+    // const response=await baseServices.
+  }
+  async function handleEdit(){
+    // const response=await baseServices.
+
+  }
   // const formData = new FormData();
 
   function handleFileChange(e) {
@@ -267,8 +274,8 @@ function Home() {
                 <TableCell>{file.name}</TableCell>
                 {file.user_permissions === 'r'?<TableCell>Read Only</TableCell>:<TableCell>Read and Write</TableCell>}
                 <TableCell>
-                <IconButton onClick={() =>{}} ><OpenInNewIcon /></IconButton>
-                {file.user_permissions === 'rw' && <IconButton onClick={() =>{}} ><EditNoteIcon /></IconButton>}</TableCell>
+                <IconButton onClick={() =>{handleOpen}} ><OpenInNewIcon /></IconButton>
+                {file.user_permissions === 'rw' && <IconButton onClick={() =>{handleEdit}} ><EditNoteIcon /></IconButton>}</TableCell>
               </TableRow>
             ))}
           </TableBody>

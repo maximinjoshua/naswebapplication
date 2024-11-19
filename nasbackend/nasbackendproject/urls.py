@@ -19,7 +19,7 @@ from django.urls import path
 
 from filemanagement.views import (upload_files, register, login, get_user_profile, get_all_users,
                                   edit_user_level, create_permission_entry, get_files, create_folder,
-                                  delete_user)
+                                  delete_user, get_disk_usage, get_system_logs, view_file, edit_file)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -32,5 +32,9 @@ urlpatterns = [
     path("createpermission", create_permission_entry),
     path("getfiles", get_files),
     path("createfolder", create_folder),
-    path("deleteuser", delete_user)
+    path("deleteuser", delete_user),
+    path("getdiskusage", get_disk_usage),
+    path("getsystemlogs", get_system_logs),
+    path("viewfile", view_file),
+    path("editfile", edit_file)
 ]
