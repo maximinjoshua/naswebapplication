@@ -200,7 +200,7 @@ function Home() {
                       onChange={handleCheckboxChange}
                     />
                   }
-                  label="Level 1 Read/Write"
+                  label="Level 1 Write"
                 />
                 <FormControlLabel
                   control={
@@ -220,7 +220,7 @@ function Home() {
                       onChange={handleCheckboxChange}
                     />
                   }
-                  label="Level 2 Read/Write"
+                  label="Level 2 Write"
                 />
               </FormGroup>
             )}
@@ -244,7 +244,7 @@ function Home() {
                       onChange={handleCheckboxChange}
                     />
                   }
-                  label="Level 2 Read/Write"
+                  label="Level 2 Write"
                 />
               </FormGroup>
             )}
