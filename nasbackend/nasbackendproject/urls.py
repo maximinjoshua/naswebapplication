@@ -32,5 +32,9 @@ urlpatterns = [
     path("createpermission", create_permission_entry),
     path("getfiles", get_files),
     path("createfolder", create_folder),
-    path("deleteuser", delete_user)
+    path("deleteuser", delete_user),
+    path("getdiskusage", get_disk_usage),
+    path("getsystemlogs", get_system_logs),
+    path("viewfile", view_file),
+    path("editfile", edit_file)
 ]
