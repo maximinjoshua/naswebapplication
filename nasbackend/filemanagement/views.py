@@ -58,18 +58,16 @@ def get_username_password_smb(user_id):
 #     return smb
 
 def permission_level_mapping(permission_list):
-    permission_dict = {}
-    if 1 in permission_list:
-        permission_dict[0] = 'r'
-    if 2 in permission_list:
-        permission_dict[0] = 'rw'
-    if 3 in permission_list:
+    # admin always has read write permission
+    permission_dict = {0: 'rw'}
+
+    if permission_list["Level1R"]:
         permission_dict[1] = 'r'
-    if 4 in permission_list:
+    if permission_list["Level1RW"]:
         permission_dict[1] = 'rw'
-    if 5 in permission_list:
+    if permission_list["Level2R"]:
         permission_dict[2] = 'r'
-    if 6 in permission_list:
+    if permission_list["Level2RW"]:
         permission_dict[2] = 'rw'
 
     return permission_dict
@@ -290,5 +288,37 @@ def edit_user_level(request):
 
     return JsonResponse(data = {"message": "Updated Successfully"})
 
+@api_view(['GET'])
+def get_disk_usage(request):
+    ssh = get_ssh_access(settings.NAS_ROOT_USERNAME, settings.NAS_ROOT_PASSWORD)
+
+    # delete user from group
+    get_disk_size_cmd = f"df -h --output=size / | tail -1 | tr -d '[:space:]'"
+    stdin, disk_size_stdout, stderr = ssh.exec_command(get_disk_size_cmd)
+
+    get_nas_size_cmd = f"du -sh {settings.NAS_TARGET_PATH} | awk '{{print $1}}'"
+    stdin, nas_size_stdout, stderr = ssh.exec_command(get_nas_size_cmd)
+
+    get_cpu_usage = f"mpstat 1 1 | awk '/Average/ {{print 100 - $12}}'"
+    stdin, cpu_usage_stdout, stderr = ssh.exec_command(get_cpu_usage)
+
+    print(stderr.read().decode('utf-8'), "error")
+
+    return JsonResponse(data = {"data": {"total_disk_size": disk_size_stdout.read().decode('utf-8'),
+                                          "nas_disk_size": nas_size_stdout.read().decode('utf-8').rstrip('\n'),
+                                          "cpu_usage": cpu_usage_stdout.read().decode('utf-8').rstrip('\n')
+                                          }})
+
+@api_view(['GET'])
+def get_system_logs(request):
+    ssh = get_ssh_access(settings.NAS_ROOT_USERNAME, settings.NAS_ROOT_PASSWORD)
+
+    # delete user from group
+    get_system_logs_cmd = f"tail -n 100 /var/log/samba/log.{settings.NAS_DEFAULT_GATEWAY}"
+    stdin, system_logs_out, stderr = ssh.exec_command(get_system_logs_cmd)
+    print(stderr.read().decode('utf-8'), "err")
+
+    return JsonResponse(data = {"data": {"system_logs": system_logs_out.read().decode('utf-8')
+                                          }})
 
 
