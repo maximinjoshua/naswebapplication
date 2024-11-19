@@ -290,6 +290,16 @@ def edit_user_level(request):
 
 @api_view(['GET'])
 def get_disk_usage(request):
+
+    def get_byte_size(size_string):
+        if size_string[-1] == 'G':
+            byte_size = int(size_string[:-1]) * 1024 * 1024 *1024
+        elif size_string[-1] == 'M':
+            byte_size = int(size_string[:-1]) * 1024 * 1024
+        elif size_string[-1] == 'K':
+            byte_size = int(size_string[:-1]) * 1024
+        return byte_size
+    
     ssh = get_ssh_access(settings.NAS_ROOT_USERNAME, settings.NAS_ROOT_PASSWORD)
 
     # delete user from group
@@ -304,8 +314,11 @@ def get_disk_usage(request):
 
     print(stderr.read().decode('utf-8'), "error")
 
-    return JsonResponse(data = {"data": {"total_disk_size": disk_size_stdout.read().decode('utf-8'),
-                                          "nas_disk_size": nas_size_stdout.read().decode('utf-8').rstrip('\n'),
+    total_disk_size = get_byte_size(disk_size_stdout.read().decode('utf-8'))
+    nas_disk_size = get_byte_size(nas_size_stdout.read().decode('utf-8').rstrip('\n'))
+
+    return JsonResponse(data = {"data": {"total_disk_size": total_disk_size,
+                                          "nas_disk_size": nas_disk_size,
                                           "cpu_usage": cpu_usage_stdout.read().decode('utf-8').rstrip('\n')
                                           }})
 
